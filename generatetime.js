@@ -54,11 +54,12 @@ generateTime.prototype.returnTimeFormat = function() {
 }
 
 window.addEventListener('load', function() {
-    const t = new generateTime();
+  const t = new generateTime();
 
-    t.setSeconds( 100 );
-    t.setMinutes( 80 );
-    t.setHours( 20 );
+  t.setSeconds( 100 );
+  t.setMinutes( 80 );
+  t.setHours( 20 );
     
-    console.log(t.returnTimeFormat()) // 21:21:40
+  console.log(t.returnTimeFormat()) // 21:21:40
+  console.log(t.getMinutes()) // 21
 });
