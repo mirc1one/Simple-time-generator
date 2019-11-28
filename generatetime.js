@@ -1,65 +1,96 @@
-function generateTime() {
-  this.hours;
-  this.minutes;
-  this.seconds;
-  this.passedFromSeconds = 0;
-  this.passedFromMinutes = 0;
+function ezDate(hours = 0, minutes = 0, seconds = 0) {
+    this.seconds = seconds
+    this.minutes = minutes
+    this.hours = hours
 
-  return this;
-}
-generateTime.prototype.setSeconds = function( seconds ) {
-  let remaining = parseInt(seconds),
-      pass = 0;
-      
-  while (remaining - 60 >= 0) {
-    pass++;
-    remaining = remaining - 60;
-  }
+    this.recalculate()
 
-  if (pass > 0) this.passedFromSeconds = pass;
-  this.seconds = remaining;
-  return this;
-}
-generateTime.prototype.setMinutes = function( minutes ) {
-  let remaining = parseInt(minutes) + this.passedFromSeconds,
-      pass = 0;
-  
-  while (remaining - 60 >= 0) {
-    pass++;
-    remaining = remaining - 60;
-  }
-
-  if (pass > 0) this.passedFromMinutes = pass;
-  this.minutes = remaining;
-  return this;
-}
-generateTime.prototype.setHours = function( hours ) {
-  this.hours = parseInt(hours) + this.passedFromMinutes;
-  return this;
-}
-generateTime.prototype.getSeconds = function() {
-  return this.seconds;
-}
-generateTime.prototype.getMinutes = function() {
-  return this.minutes;
-}
-generateTime.prototype.getHours = function() {
-  return this.hours;
-}
-generateTime.prototype.returnTimeFormat = function() {
-  let s = this.seconds < 10 ? `0${this.seconds}` : this.seconds,
-      m = this.minutes < 10 ? `0${this.minutes}` : this.minutes, 
-      h = this.hours < 10 ? `0${this.hours}` : this.hours;
-  return `${h}:${m}:${s}`;
+    return this
 }
 
-window.addEventListener('load', function() {
-  const t = new generateTime();
+ezDate.prototype.recalculate = function() {
+    const seconds = this.seconds
+    this.seconds = seconds < 60 ? seconds : seconds % 60
 
-  t.setSeconds( 100 );
-  t.setMinutes( 80 );
-  t.setHours( 20 );
-    
-  console.log(t.returnTimeFormat()) // 21:21:40
-  console.log(t.getMinutes()) // 21
-});
+    const minutes = this.minutes
+    this.minutes = (minutes + parseInt(seconds / 60)) % 60
+
+    this.hours = this.hours + (parseInt(minutes / 60) % 60)
+}
+
+ezDate.prototype.set = function(hours, minutes, seconds) {
+    this.seconds = seconds
+    this.minutes = minutes
+    this.hours = hours
+    this.recalculate()
+
+    return this
+}
+
+ezDate.prototype.setSeconds = function(seconds) {
+    this.seconds = seconds
+    this.recalculate()
+
+    return this
+}
+
+ezDate.prototype.setMinutes = function(minutes) {
+    this.minutes = minutes
+    this.recalculate()
+
+    return this
+}
+
+ezDate.prototype.setHours = function(hours) {
+    this.hours = hours
+
+    return this
+}
+
+ezDate.prototype.addSeconds = function(seconds) {
+    this.seconds = this.seconds + seconds
+    this.recalculate()
+
+    return this
+}
+
+ezDate.prototype.addMinutes = function(minutes) {
+    this.minutes = this.minutes + minutes
+    this.recalculate()
+
+    return this
+}
+
+ezDate.prototype.addHours = function(hours) {
+    this.hours = this.hours + hours
+
+    return this
+}
+
+ezDate.prototype.getSeconds = function() {
+    return this.seconds
+}
+
+ezDate.prototype.getMinutes = function() {
+    return this.minutes
+}
+
+ezDate.prototype.getHours = function() {
+    return this.hours
+}
+
+ezDate.prototype.getTime = function(type = { precedingZero: false }) {
+    if (type.precedingZero) {
+        const isTwoDigitS = this.seconds < 10 ? `0${this.seconds}` : this.seconds
+        const isTwoDigitsM = this.minutes < 10 ? `0${this.minutes}` : this.minutes
+        const isTwoDigitsH = this.hours < 10 ? `0${this.hours}` : this.hours
+        console.log(`${isTwoDigitsH}:${isTwoDigitsM}:${isTwoDigitS}`)
+    } else {
+        console.log(`${this.hours}:${this.minutes}:${this.seconds}`)
+    }
+
+    return this
+}
+
+const date = new ezDate(1, 0, 50)
+date.addSeconds(25).addHours(2).addMinutes(65).getTime({ precedingZero: true })
